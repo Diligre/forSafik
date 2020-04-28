@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
+import {Project, ProjectService} from '../project.service';
 
 @Component({
   selector: 'app-todo-panel',
@@ -8,24 +9,24 @@ import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 })
 export class TodoPanelComponent implements OnInit {
   panelOpenState = false;
-  movies = [
-    {id: 1, name: 'Episode I - The Phantom Menace'},
-    {id: 2, name: 'Episode II - The Phantom Menace'},
-    {id: 3, name: 'Episode III - The Phantom Menace'},
-    {id: 4, name: 'Episode IV - The Phantom Menace'},
-    {id: 5, name: 'Episode V - The Phantom Menace'},
-    {id: 6, name: 'Episode VI - The Phantom Menace'}
+  projects: Project[] = [
+
   ];
 
-  drop(event: CdkDragDrop<any[]>) {
-    moveItemInArray(this.movies, event.previousIndex, event.currentIndex);
-    console.log(this.movies[event.currentIndex], event.currentIndex);
+  drop(event: CdkDragDrop<any>) {
+    moveItemInArray(this.projects, event.previousIndex, event.currentIndex);
+    console.log(this.projects[event.currentIndex], event.currentIndex);
 
   }
 
-  constructor() { }
+  constructor(private projectService: ProjectService) {
+  }
 
   ngOnInit() {
+    this.projectService.getProjects().subscribe(res => {
+      this.projects = res;
+      console.log(res);
+    });
   }
 
 }
