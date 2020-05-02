@@ -1,0 +1,6 @@
+{
+  "/api": {
+    "target": "http://tasktodolist.herokuapp.com/",
+    "secure": false
+  }
+}

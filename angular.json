@@ -68,7 +68,8 @@
           },
           "configurations": {
             "production": {
-              "browserTarget": "todo:build:production"
+              "browserTarget": "todo:build:production",
+              "proxyConfig": "proxy.conf.json"
             }
           }
         },

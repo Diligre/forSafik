@@ -1,0 +1,225 @@
+Index: src/app/cv/cv.component.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/app/cv/cv.component.html	(date 1587939555253)
++++ src/app/cv/cv.component.html	(date 1587939555253)
+@@ -0,0 +1,70 @@
++<mat-vertical-stepper [linear]="isLinear" #stepper>
++  <mat-step>
++    <form [formGroup]="firstFormGroup">
++      <ng-template matStepLabel>Contact info</ng-template>
++      <mat-form-field>
++        <mat-label>First Name</mat-label>
++        <input matInput placeholder="First name" formControlName="firstName" required>
++      </mat-form-field>
++
++      <mat-form-field>
++        <mat-label>Last Name</mat-label>
++        <input matInput placeholder="Last name" formControlName="lastName" required>
++      </mat-form-field>
++
++      <mat-form-field>
++        <mat-label>Email</mat-label>
++        <input matInput placeholder="Email" formControlName="email" required>
++      </mat-form-field>
++
++      <mat-form-field>
++        <mat-label>Phone</mat-label>
++        <input matInput placeholder="Phone" formControlName="phone">
++      </mat-form-field>
++    </form>
++    <div>
++      <button mat-button matStepperNext>Next</button>
++    </div>
++  </mat-step>
++<!-- OBJECTIVES -->
++  <mat-step>
++    <form [formGroup]="firstFormGroup">
++      <ng-template matStepLabel>Objectives</ng-template>
++      <mat-form-field>
++        <mat-label>Objectives</mat-label>
++        <textarea matInput formControlName="objectives" cdkTextareaAutosize></textarea>
++      </mat-form-field>
++    </form>
++    <div>
++      <button mat-button matStepperNext>Next</button>
++    </div>
++  </mat-step>
++<!-- EXPERIENCE -->
++  <mat-step>
++    <form [formGroup]="firstFormGroup">
++      <ng-template matStepLabel>Experience</ng-template>
++      <span class="material-icons" (click)="addExperience()">add_circle</span>
++
++      <div formArrayName="experiences">
++        <div *ngFor="let item of experiences.controls; let index=index" [formGroupName]="index">
++          <mat-form-field>
++            <mat-label>Experience {{index}}</mat-label>
++            <input matInput formControlName="experience">
++          </mat-form-field>
++        </div>
++      </div>
++    </form>
++    <div>
++      <button mat-button matStepperNext>Next</button>
++    </div>
++  </mat-step>
++
++  <mat-step>
++    <ng-template matStepLabel>Done</ng-template>
++    <p>{{firstFormGroup.value | json}}</p>
++    <div>
++      <button mat-button matStepperPrevious>Back</button>
++      <button mat-button (click)="stepper.reset()">Reset</button>
++    </div>
++  </mat-step>
++</mat-vertical-stepper>
+Index: src/app/cv/cv.component.spec.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/app/cv/cv.component.spec.ts	(date 1587936024042)
++++ src/app/cv/cv.component.spec.ts	(date 1587936024042)
+@@ -0,0 +1,25 @@
++import { async, ComponentFixture, TestBed } from '@angular/core/testing';
++
++import { CvComponent } from './cv.component';
++
++describe('CvComponent', () => {
++  let component: CvComponent;
++  let fixture: ComponentFixture<CvComponent>;
++
++  beforeEach(async(() => {
++    TestBed.configureTestingModule({
++      declarations: [ CvComponent ]
++    })
++    .compileComponents();
++  }));
++
++  beforeEach(() => {
++    fixture = TestBed.createComponent(CvComponent);
++    component = fixture.componentInstance;
++    fixture.detectChanges();
++  });
++
++  it('should create', () => {
++    expect(component).toBeTruthy();
++  });
++});
+Index: src/app/cv/cv.component.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/app/cv/cv.component.ts	(date 1587939484474)
++++ src/app/cv/cv.component.ts	(date 1587939484474)
+@@ -0,0 +1,36 @@
++import { Component, OnInit } from '@angular/core';
++import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
++
++@Component({
++  selector: 'app-cv',
++  templateUrl: './cv.component.html',
++  styleUrls: ['./cv.component.css']
++})
++export class CvComponent implements OnInit {
++  isLinear = false;
++  firstFormGroup: FormGroup;
++
++  constructor(private fb: FormBuilder) {}
++
++  ngOnInit() {
++    this.firstFormGroup = this.fb.group({
++      firstName: ['Vadym', Validators.required],
++      lastName: ['Kravchyk', Validators.required],
++      email: ['vkravchik@gmail.com', [Validators.required, Validators.email]],
++      phone: ['+380669956680'],
++      objectives: ['My objectives are: bla bla bla bla bla bla'],
++      experiences: this.fb.array([]),
++    });
++  }
++
++  get experiences() {
++    return this.firstFormGroup.get('experiences') as FormArray;
++  }
++
++  addExperience() {
++    this.experiences.push(this.fb.group({
++      experience: '',
++    }));
++  }
++
++}
+Index: src/app/app.module.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/app/app.module.ts	(revision c3c171cee8015a2c0b887cfbe59995ea21ce7e63)
++++ src/app/app.module.ts	(date 1587937870785)
+@@ -3,21 +3,29 @@
+ 
+ import { AppComponent } from './app.component';
+ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+-import {MatExpansionModule, MatTreeModule} from '@angular/material';
++import {MatButtonModule, MatExpansionModule, MatIconModule, MatInputModule, MatStepperModule, MatTreeModule} from '@angular/material';
+ import { TodoPanelComponent } from './todo-panel/todo-panel.component';
+ import {DragDropModule} from '@angular/cdk/drag-drop';
++import { CvComponent } from './cv/cv.component';
++import {ReactiveFormsModule} from '@angular/forms';
+ 
+ @NgModule({
+   declarations: [
+     AppComponent,
+-    TodoPanelComponent
++    TodoPanelComponent,
++    CvComponent
+   ],
+   imports: [
+     BrowserModule,
+     BrowserAnimationsModule,
+     MatTreeModule,
+     MatExpansionModule,
+-    DragDropModule
++    DragDropModule,
++    MatStepperModule,
++    ReactiveFormsModule,
++    MatButtonModule,
++    MatInputModule,
++    MatIconModule
+   ],
+   providers: [],
+   bootstrap: [AppComponent]
+Index: src/app/cv/cv.component.css
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/app/cv/cv.component.css	(date 1587939626669)
++++ src/app/cv/cv.component.css	(date 1587939626669)
+@@ -0,0 +1,12 @@
++.mat-stepper-horizontal {
++  margin-top: 8px;
++}
++
++.mat-form-field {
++  margin-top: 16px;
++}
++
++form {
++  display: flex;
++  flex-direction: column;
++}
+Index: src/app/app.component.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/app/app.component.html	(revision c3c171cee8015a2c0b887cfbe59995ea21ce7e63)
++++ src/app/app.component.html	(date 1587936039839)
+@@ -1,1 +1,1 @@
+-<app-todo-panel></app-todo-panel>
++<app-cv></app-cv>
