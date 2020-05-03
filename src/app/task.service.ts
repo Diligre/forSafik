@@ -1,8 +1,7 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {environment} from '../environments/environment';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {Project} from './common/interfaces/Project';
 import {Task} from './common/interfaces/Task';
 
 @Injectable({
@@ -19,9 +18,17 @@ export class TaskService {
   }
 
   updateTaskStatus(id: number, status: boolean): Observable<Task> {
-    return this.http.put<Task>(`${this.URL}/updateStatus`,  {
+    return this.http.put<Task>(`${this.URL}/updateStatus`, {
       id,
       status
     });
   }
+
+  updateTaskName(id: number, name: string): Observable<Task> {
+    return this.http.put<Task>(`${this.URL}`, {
+      id,
+      name
+    });
+  }
+
 }

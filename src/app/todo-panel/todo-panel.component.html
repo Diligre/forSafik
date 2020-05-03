@@ -15,17 +15,18 @@
               <span *ngIf="!isSelectedTask(task)" [class.through-text]="task.status">
                 {{task.name}}
               </span>
-              <mat-form-field *ngIf="isSelectedTask(task)" class="full-width">
-                <label class="button-input">
-                  <input matInput
-                         [(ngModel)]="selectedTask.name"
-                         (focusout)="editTaskFinished($event.target.value, task)"
-                         (keyup.enter)="editTaskFinished($event.target.value, task)"
-                         placeholder="Name"
-                  >
-                </label>
-              </mat-form-field>
+
             </mat-checkbox>
+            <mat-form-field *ngIf="isSelectedTask(task)" class="full-width">
+              <label class="button-input">
+                <input matInput
+                       [(ngModel)]="selectedTask.name"
+                       (focusout)="editTaskFinished($event.target.value, task)"
+                       (keyup.enter)="editTaskFinished($event.target.value, task)"
+                       placeholder="Name"
+                >
+              </label>
+            </mat-form-field>
 
             <button mat-icon-button *ngIf="!isSelectedTask(task)" class="clickable">
               <span class="material-icons" (click)="editTaskStarted(task)">create</span>

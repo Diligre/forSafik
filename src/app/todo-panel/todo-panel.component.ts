@@ -5,6 +5,7 @@ import {Project} from '../common/interfaces/Project';
 import {TaskService} from '../task.service';
 import {Task} from '../common/interfaces/Task';
 import * as _ from 'lodash';
+import {element} from "protractor";
 
 @Component({
   selector: 'app-todo-panel',
@@ -53,6 +54,13 @@ export class TodoPanelComponent implements OnInit {
     });
   }
 
+  changeTask(task: Task) {
+    this.taskService.updateTaskName(task.id, task.name).subscribe((res: Task) => {
+      console.log(res);
+
+    });
+  }
+
   editTaskStarted(task: Task) {
     this.selectedTask = task;
   }
@@ -63,7 +71,9 @@ export class TodoPanelComponent implements OnInit {
     }
     console.log(value, task);
     this.selectedTask = null;
+    this.changeTask(task);
   }
 
   isSelectedTask = (task) => this.selectedTask === task;
+
 }
