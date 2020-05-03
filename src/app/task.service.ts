@@ -31,4 +31,15 @@ export class TaskService {
     });
   }
 
+  deleteTask(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.URL}/${id}`);
+  }
+
+  saveTask(name: string, projectId: number): Observable<Task> {
+    return this.http.post<Task>(`${this.URL}`, {
+      name,
+      projectId
+    });
+  }
+
 }

@@ -5,7 +5,6 @@ import {Project} from '../common/interfaces/Project';
 import {TaskService} from '../task.service';
 import {Task} from '../common/interfaces/Task';
 import * as _ from 'lodash';
-import {element} from "protractor";
 
 @Component({
   selector: 'app-todo-panel',
@@ -16,6 +15,7 @@ export class TodoPanelComponent implements OnInit {
   projects: Project[];
   tasks: Task[];
   selectedTask: Task;
+  selectedProject: Project;
 
   availableTasks: Task[] = [];
   disabledTasks: Task[] = [];
@@ -41,6 +41,16 @@ export class TodoPanelComponent implements OnInit {
     });
   }
 
+  deleteTask(task: Task) {
+    this.taskService.deleteTask(task.id).subscribe((res: void) => {
+      const index = this.tasks.findIndex((el: Task) => el.id === task.id);
+      this.tasks.splice(index, 1);
+
+      console.log('deleted');
+    });
+  }
+
+
   changeTaskStatus(task: Task) {
     this.taskService.updateTaskStatus(task.id, !task.status).subscribe((res: Task) => {
       const index = this.tasks.findIndex((el: Task) => el.id === task.id);
@@ -54,6 +64,7 @@ export class TodoPanelComponent implements OnInit {
     });
   }
 
+
   changeTask(task: Task) {
     this.taskService.updateTaskName(task.id, task.name).subscribe((res: Task) => {
       console.log(res);
@@ -65,6 +76,11 @@ export class TodoPanelComponent implements OnInit {
     this.selectedTask = task;
   }
 
+  editProjectStarted(project: Project) {
+    this.selectedProject = project;
+  }
+
+
   editTaskFinished(value: string, task: Task, event?: Event) {
     if (event) {
       event.preventDefault();
@@ -74,6 +90,30 @@ export class TodoPanelComponent implements OnInit {
     this.changeTask(task);
   }
 
+  editProjectFinished(value: string, projectId: number, event?: Event) {
+    if (event) {
+      event.preventDefault();
+    }
+    console.log(value, projectId);
+    this.selectedProject = null;
+    this.saveTask(value, projectId);
+  }
+
+
+  saveTask(name: string, projectId: number) {
+    this.taskService.saveTask(name, projectId).subscribe((res: Task) => {
+      console.log(res);
+    });
+  }
+
+  saveProject(name: string) {
+    this.projectService.saveProject(name).subscribe((res: Project) => {
+      console.log(res);
+    });
+  }
+
   isSelectedTask = (task) => this.selectedTask === task;
+
+  isSelectedProject = (project) => this.selectedProject === project;
 
 }

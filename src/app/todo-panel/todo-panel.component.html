@@ -1,41 +1,90 @@
-<mat-accordion>
-    <mat-expansion-panel *ngFor="let project of projects" (opened)="getTasksByProject(project)">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          {{project.name}}
-        </mat-panel-title>
-      </mat-expansion-panel-header>
+<div>
+  <div>
+    <button mat-icon-button *ngIf class="clickable">
+      <span class="material-icons" >add</span>
+    </button>
+  </div>
+  <mat-form-field *ngIf class=" full-width">
+    <label class="button-input">
+      <input matInput
 
-      <ng-template matExpansionPanelContent>
-        <div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
-          <div class="example-box" *ngFor="let task of tasks" cdkDrag>
-            <div class="example-custom-placeholder" *cdkDragPlaceholder></div>
-            <mat-checkbox [checked]="task.status"
-                          (change)="changeTaskStatus(task)">
+             (focusout)="saveProject($event.target.value)"
+             (keyup.enter)="saveProject($event.target.value)"
+      >
+    </label>
+
+  </mat-form-field>
+</div>
+<mat-accordion>
+  <mat-expansion-panel *ngFor="let project of projects" (opened)="getTasksByProject(project)">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        {{project.name}}
+
+      </mat-panel-title>
+
+      <mat-form-field *ngIf="isSelectedProject(project)" class="full-width">
+        <label class="button-input">
+          <input matInput
+
+                 (focusout)="editProjectFinished($event.target.value, project.id)"
+                 (keyup.enter)="editProjectFinished($event.target.value, project.id)"
+          >
+        </label>
+
+      </mat-form-field>
+      <div>
+        <button mat-icon-button *ngIf="!isSelectedProject(project)" class="clickable">
+          <span class="material-icons" (click)="editProjectStarted(project)">add</span>
+        </button>
+
+        <button mat-icon-button *ngIf="isSelectedProject(project)" class="clickable">
+          <span class="material-icons"
+                (click)="editProjectFinished(selectedProject.name, project.id, $event)">done</span>
+        </button>
+
+      </div>
+    </mat-expansion-panel-header>
+
+    <ng-template matExpansionPanelContent>
+      <div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
+        <div class="example-box" *ngFor="let task of tasks" cdkDrag>
+          <div class="example-custom-placeholder" *cdkDragPlaceholder></div>
+          <mat-checkbox [checked]="task.status"
+                        (change)="changeTaskStatus(task)">
               <span *ngIf="!isSelectedTask(task)" [class.through-text]="task.status">
                 {{task.name}}
               </span>
 
-            </mat-checkbox>
-            <mat-form-field *ngIf="isSelectedTask(task)" class="full-width">
-              <label class="button-input">
-                <input matInput
-                       [(ngModel)]="selectedTask.name"
-                       (focusout)="editTaskFinished($event.target.value, task)"
-                       (keyup.enter)="editTaskFinished($event.target.value, task)"
-                       placeholder="Name"
-                >
-              </label>
-            </mat-form-field>
+          </mat-checkbox>
+          <mat-form-field *ngIf="isSelectedTask(task)" class="full-width">
+            <label class="button-input">
+              <input matInput
+                     [(ngModel)]="selectedTask.name"
+                     (focusout)="editTaskFinished($event.target.value, task)"
+                     (keyup.enter)="editTaskFinished($event.target.value, task)"
+                     placeholder="Name"
+              >
+            </label>
 
+          </mat-form-field>
+          <div>
             <button mat-icon-button *ngIf="!isSelectedTask(task)" class="clickable">
               <span class="material-icons" (click)="editTaskStarted(task)">create</span>
             </button>
-            <button mat-icon-button *ngIf="isSelectedTask(task)" class="clickable">
-              <span class="material-icons" (click)="editTaskFinished(selectedTask.name, task, $event)">done</span>
+            <button mat-icon-button *ngIf="!isSelectedTask(task)" class="clickable">
+              <span class="material-icons" (click)="deleteTask(task)">clear</span>
             </button>
           </div>
+
+          <button mat-icon-button *ngIf="isSelectedTask(task)" class="clickable">
+            <span class="material-icons" (click)="editTaskFinished(selectedTask.name, task, $event)">done</span>
+          </button>
+
+
         </div>
-      </ng-template>
-    </mat-expansion-panel>
+
+      </div>
+    </ng-template>
+  </mat-expansion-panel>
 </mat-accordion>
